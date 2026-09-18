@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+REPO_ROOT="${REPO_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)}"
+while [ ! -d "${REPO_ROOT}/finetune" ] && [ "${REPO_ROOT}" != "/" ]; do REPO_ROOT="$(dirname "${REPO_ROOT}")"; done
+CKPT_DIR="${CKPT_DIR:-${REPO_ROOT}/checkpoints}"
 # =============================================================================
 # GW-Gram alignment  --  CogVideoX-5B LoRA on OpenVid
 #
@@ -12,7 +15,7 @@
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-CKPT_DIR="${CKPT_DIR:-/efs/zixianhuang/ckpt}"
+CKPT_DIR="${CKPT_DIR:-${REPO_ROOT}/checkpoints}"
 NUM_GPUS="${NUM_GPUS:-8}"
 
 export NCCL_DEBUG=ERROR

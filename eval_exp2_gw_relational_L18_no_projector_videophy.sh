@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
+REPO_ROOT="${REPO_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)}"
+while [ ! -d "${REPO_ROOT}/finetune" ] && [ "${REPO_ROOT}" != "/" ]; do REPO_ROOT="$(dirname "${REPO_ROOT}")"; done
+CKPT_DIR="${CKPT_DIR:-${REPO_ROOT}/checkpoints}"
 set -e
-source /efs/zixianhuang/VideoREPA/videorepa/bin/activate
-export PATH="/efs/zixianhuang/VideoREPA/videorepa/bin:$PATH"
+source ${REPO_ROOT}/videorepa/bin/activate
+export PATH="${REPO_ROOT}/videorepa/bin:$PATH"
 
 ###############################################################################
 # VideoREPA Exp2 - GW Relational L18 No Projector - VideoPhy v1 Evaluation Pipeline
@@ -24,16 +27,16 @@ export PATH="/efs/zixianhuang/VideoREPA/videorepa/bin:$PATH"
 ###############################################################################
 
 # ======================== Configuration ========================
-BASE_PATH="/efs/zixianhuang/VideoREPA"
+BASE_PATH="${REPO_ROOT}"
 FINETUNE_DIR="${BASE_PATH}/finetune"
 INFERENCE_DIR="${BASE_PATH}/inference"
 EVAL_V1_DIR="${BASE_PATH}/evaluation/videophy"
 
 # Original CogVideoX-2B model path
-ORIG_MODEL="/efs/zixianhuang/ckpt/cogvideox-2b"
+ORIG_MODEL="${CKPT_DIR}/cogvideox-2b"
 
 # VideoPhy v1 AutoEval checkpoint path
-VIDEOPHY_V1_CKPT="/efs/zixianhuang/ckpt/videocon_physics"
+VIDEOPHY_V1_CKPT="${CKPT_DIR}/videocon_physics"
 
 # Experiment directory (exp2: GW relational L18 no projector, checkpoint-4000)
 EXP_DIR="${FINETUNE_DIR}/output_dir_cogvideox-t2v-gw-align_gw_relational_exp2_gw_relational_L18_no_projector"

@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+REPO_ROOT="${REPO_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)}"
+while [ ! -d "${REPO_ROOT}/finetune" ] && [ "${REPO_ROOT}" != "/" ]; do REPO_ROOT="$(dirname "${REPO_ROOT}")"; done
+CKPT_DIR="${CKPT_DIR:-${REPO_ROOT}/checkpoints}"
 # =============================================================================
 # GW-Relational alignment  --  CogVideoX-2B full fine-tuning (SFT) on OpenVid
 #
@@ -8,13 +11,13 @@
 #   bash configs/gw_relational/train_2b_sft_gw_relational.sh [extra train.py args]
 #
 # Environment overrides:
-#   CKPT_DIR   root containing cogvideox-2b / VideoMAEv2  (default /efs/zixianhuang/ckpt)
+#   CKPT_DIR   root containing cogvideox-2b / VideoMAEv2  (default ${CKPT_DIR})
 #   NUM_GPUS   number of processes for accelerate          (default 8)
 # =============================================================================
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-CKPT_DIR="${CKPT_DIR:-/efs/zixianhuang/ckpt}"
+CKPT_DIR="${CKPT_DIR:-${REPO_ROOT}/checkpoints}"
 NUM_GPUS="${NUM_GPUS:-8}"
 
 export NCCL_DEBUG=ERROR

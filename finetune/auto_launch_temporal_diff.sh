@@ -1,10 +1,13 @@
 #!/usr/bin/env bash
+REPO_ROOT="${REPO_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)}"
+while [ ! -d "${REPO_ROOT}/finetune" ] && [ "${REPO_ROOT}" != "/" ]; do REPO_ROOT="$(dirname "${REPO_ROOT}")"; done
+CKPT_DIR="${CKPT_DIR:-${REPO_ROOT}/checkpoints}"
 # Auto-launch temporal_diff_only training after TRD training finishes.
 # Usage: nohup bash auto_launch_temporal_diff.sh > auto_launch_temporal_diff.log 2>&1 &
 
-TRD_LOG="/efs/zixianhuang/VideoREPA/finetune/train_frozen_projector_TRD.log"
-NEXT_SCRIPT="/efs/zixianhuang/VideoREPA/finetune/scripts/multigpu_VideoREPA_2B_sft_frozen_projector_temporal_diff.sh"
-NEXT_LOG="/efs/zixianhuang/VideoREPA/finetune/train_frozen_projector_temporal_diff.log"
+TRD_LOG="${REPO_ROOT}/finetune/train_frozen_projector_TRD.log"
+NEXT_SCRIPT="${REPO_ROOT}/finetune/scripts/multigpu_VideoREPA_2B_sft_frozen_projector_temporal_diff.sh"
+NEXT_LOG="${REPO_ROOT}/finetune/train_frozen_projector_temporal_diff.log"
 
 echo "[$(date)] Monitoring TRD training for completion..."
 
@@ -28,7 +31,7 @@ echo "[$(date)] Waiting 30s for GPU memory release..."
 sleep 30
 
 echo "[$(date)] Launching temporal_diff_only training..."
-cd /efs/zixianhuang/VideoREPA/finetune
+cd ${REPO_ROOT}/finetune
 nohup bash "${NEXT_SCRIPT}" > "${NEXT_LOG}" 2>&1 &
 NEXT_PID=$!
 echo "[$(date)] Temporal diff training launched with PID: ${NEXT_PID}"

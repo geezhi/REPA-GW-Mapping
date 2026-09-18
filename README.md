@@ -48,6 +48,17 @@ The key hypothesis: *a learnable projector absorbs the alignment gradient*. Remo
 
 ```
 VideoREPA/
+├── configs/                    # launch scripts, grouped by alignment method
+│   ├── gw_relational/          # ★ the released GW runs (2B SFT, 5B LoRA, gw_gram)
+│   ├── repa_baseline/          #   REPA / TRD / ablations (learned projector)
+│   ├── ot_dim_align/           #   projector-free, Sinkhorn-OT across dimensions
+│   ├── dim_align/              #   projector-free, dimension-level OT
+│   ├── dim_token_align/        #   dimension-guided token alignment
+│   ├── direct_align/           #   direct relational alignment (no transport plan)
+│   ├── local_gram_flow/        #   local Gram matrix + temporal flow
+│   ├── merger_align/           #   token-merging alignment
+│   ├── fixed_proj_align/       #   frozen random projector
+│   └── data/                   #   dataset precomputation
 ├── finetune/
 │   ├── gw_relational/          # ★ canonical GW solver + losses + adapter + tests
 │   │   ├── gromov.py           #   entropic GW, log-Sinkhorn, GW cost
@@ -57,10 +68,9 @@ VideoREPA/
 │   │   └── tests/              #   unit tests
 │   ├── models/                 # one sub-package per alignment variant (trainers)
 │   ├── schemas/                # args / components / state
-│   ├── scripts/                # raw per-experiment launch scripts
+│   ├── paths.py                # ★ REPO_ROOT / CKPT_DIR (env-overridable)
 │   ├── train.py                # entry point (accelerate)
-│   └── openvid/                # training data
-├── configs/gw_relational/      # ★ reproducible launch scripts for the release
+│   └── openvid/                # training data (not tracked by git)
 ├── inference/                  # video generation from a trained checkpoint
 └── evaluation/                 # VideoPhy / VBench evaluation
 ```
@@ -74,9 +84,9 @@ conda create -n videorepa python=3.10 -y && conda activate videorepa
 pip install -r requirements.txt
 ```
 
-Checkpoints (CogVideoX-2B / 5B, VideoMAEv2, ...) are read from `${CKPT_DIR}`
-(default `/efs/zixianhuang/ckpt`, override it for your machine); see `download.sh` and
-`download_vfm.sh`. The frozen encoders are additionally resolved through `${VFM_CKPT_DIR}`.
+Checkpoints (CogVideoX-2B / 5B, VideoMAEv2, ...) are read from `${CKPT_DIR}`, which
+defaults to `<repo root>/checkpoints`; see `download.sh` and `download_vfm.sh`. All paths
+are resolved through `finetune/paths.py`, so nothing is hard-coded to a particular machine.
 
 ```bash
 export CKPT_DIR=/path/to/your/checkpoints

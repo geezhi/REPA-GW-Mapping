@@ -39,6 +39,7 @@ import torch.nn as nn
 from ..utils import register
 from torchvision.transforms import Normalize
 from timm.data import IMAGENET_DEFAULT_MEAN, IMAGENET_DEFAULT_STD
+from finetune.paths import ckpt
 
 
 def compute_local_gram_flow_loss(student_feat, teacher_feat, patch_size_h=5, patch_size_w=5, 
@@ -192,13 +193,13 @@ class CogVideoXT2VLocalGramFlowLoraTrainer(Trainer):
         assert len(self.args.align_models) == 1, 'Currently support one alignment model'
         if self.args.align_models[0] == "VideoMAEv2":
             self.vision_encoder = vit_base_patch16_224().to(self.accelerator.device)
-            self.vision_encoder.from_pretrained('/efs/zixianhuang/ckpt/VideoMAEv2/vit_b_k710_dl_from_giant.pth')
+            self.vision_encoder.from_pretrained(ckpt("VideoMAEv2", "vit_b_k710_dl_from_giant.pth"))
             self.vision_encoder.eval()
             for param in self.vision_encoder.parameters():
                 param.require_grad = False
         elif self.args.align_models[0] == "VideoMAE":
             self.vision_encoder = VideoMAE_vit_base_patch16_224().to(self.accelerator.device)
-            self.vision_encoder.from_pretrained('/efs/zixianhuang/ckpt/VideoMAE/k400_videomae_pretrain_base_patch16_224_frame_16x4_tube_mask_ratio_0_9_e1600.pth')
+            self.vision_encoder.from_pretrained(ckpt("VideoMAE", "k400_videomae_pretrain_base_patch16_224_frame_16x4_tube_mask_ratio_0_9_e1600.pth"))
             self.vision_encoder.eval()
             for param in self.vision_encoder.parameters():
                 param.require_grad = False
@@ -213,7 +214,7 @@ class CogVideoXT2VLocalGramFlowLoraTrainer(Trainer):
             self.vision_encoder.embed_dim = 768
         elif self.args.align_models[0] == 'VJEPA':
             from finetune.models.cogvideox_t2v_local_gram_flow.models.ssl.JEPA import load_VJEPA
-            self.vision_encoder = load_VJEPA(device=self.accelerator.device, pretrained_path='/efs/zixianhuang/ckpt/vjepa_l/vitl16.pth.tar')
+            self.vision_encoder = load_VJEPA(device=self.accelerator.device, pretrained_path=ckpt("vjepa_l", "vitl16.pth.tar"))
             self.vision_encoder.eval()
             for param in self.vision_encoder.parameters():
                 param.require_grad = False

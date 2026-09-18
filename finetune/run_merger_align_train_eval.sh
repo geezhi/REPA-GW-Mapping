@@ -1,15 +1,18 @@
 #!/usr/bin/env bash
-source /efs/zixianhuang/VideoREPA/videorepa/bin/activate
-export PATH="/efs/zixianhuang/VideoREPA/videorepa/bin:$PATH"
+REPO_ROOT="${REPO_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)}"
+while [ ! -d "${REPO_ROOT}/finetune" ] && [ "${REPO_ROOT}" != "/" ]; do REPO_ROOT="$(dirname "${REPO_ROOT}")"; done
+CKPT_DIR="${CKPT_DIR:-${REPO_ROOT}/checkpoints}"
+source ${REPO_ROOT}/videorepa/bin/activate
+export PATH="${REPO_ROOT}/videorepa/bin:$PATH"
 export NCCL_DEBUG=ERROR
 export OMP_NUM_THREADS=8
 export TOKENIZERS_PARALLELISM=false
 
-BASE_PATH="/efs/zixianhuang/VideoREPA"
-ORIG_MODEL="/efs/zixianhuang/ckpt/cogvideox-2b"
+BASE_PATH="${REPO_ROOT}"
+ORIG_MODEL="${CKPT_DIR}/cogvideox-2b"
 INFERENCE_DIR="${BASE_PATH}/inference"
 EVAL_V1_DIR="${BASE_PATH}/evaluation/videophy"
-VIDEOPHY_V1_CKPT="/efs/zixianhuang/ckpt/videocon_physics"
+VIDEOPHY_V1_CKPT="${CKPT_DIR}/videocon_physics"
 EXP_NAME="merger_align"
 EXP_COMMENT="exp_merger_align_L18_3w2_4ep"
 

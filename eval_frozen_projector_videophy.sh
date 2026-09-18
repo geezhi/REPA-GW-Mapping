@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
+REPO_ROOT="${REPO_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)}"
+while [ ! -d "${REPO_ROOT}/finetune" ] && [ "${REPO_ROOT}" != "/" ]; do REPO_ROOT="$(dirname "${REPO_ROOT}")"; done
+CKPT_DIR="${CKPT_DIR:-${REPO_ROOT}/checkpoints}"
 set -e
-source /efs/zixianhuang/VideoREPA/videorepa/bin/activate
-export PATH="/efs/zixianhuang/VideoREPA/videorepa/bin:$PATH"
+source ${REPO_ROOT}/videorepa/bin/activate
+export PATH="${REPO_ROOT}/videorepa/bin:$PATH"
 
 ###############################################################################
 # Evaluate all 3 frozen-projector experiments on VideoPhy v1
@@ -20,12 +23,12 @@ export PATH="/efs/zixianhuang/VideoREPA/videorepa/bin:$PATH"
 #   bash eval_frozen_projector_videophy.sh [--stage 1|2|3|all] [--exp 1|2|3|all]
 ###############################################################################
 
-BASE_PATH="/efs/zixianhuang/VideoREPA"
+BASE_PATH="${REPO_ROOT}"
 FINETUNE_DIR="${BASE_PATH}/finetune"
 INFERENCE_DIR="${BASE_PATH}/inference"
 EVAL_V1_DIR="${BASE_PATH}/evaluation/videophy"
-ORIG_MODEL="/efs/zixianhuang/ckpt/cogvideox-2b"
-VIDEOPHY_V1_CKPT="/efs/zixianhuang/ckpt/videocon_physics"
+ORIG_MODEL="${CKPT_DIR}/cogvideox-2b"
+VIDEOPHY_V1_CKPT="${CKPT_DIR}/videocon_physics"
 
 # Experiment configs: (name, output_dir_suffix, checkpoint_step)
 declare -A EXP_NAMES

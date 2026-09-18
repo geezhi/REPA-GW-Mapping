@@ -10,9 +10,9 @@ This creates a fixed projection matrix W_pca (2304 x 1920) that:
 
 Usage:
     python fit_teacher_pca.py \
-        --data_csv /efs/zixianhuang/VideoREPA/finetune/openvid/openvid_subset_3000.csv \
-        --data_root /efs/zixianhuang/VideoREPA/finetune \
-        --output_path /efs/zixianhuang/VideoREPA/finetune/teacher_pca_matrix.pth \
+        --data_csv <REPO>/finetune/openvid/openvid_subset_3000.csv \
+        --data_root <REPO>/finetune \
+        --output_path <REPO>/finetune/teacher_pca_matrix.pth \
         --num_samples 3000 \
         --layer_indices 9 10 11
 """
@@ -31,6 +31,7 @@ from torchvision.transforms import Normalize
 import torch.nn.functional as F
 
 from finetune.models.cogvideox_t2v_align.models.ssl.VideoMAEv2 import vit_base_patch16_224
+from finetune.paths import ckpt, repo
 
 
 DEVICE = "cuda:0"
@@ -105,9 +106,9 @@ def extract_multilayer_teacher_features(vision_encoder, frames, layer_indices):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--data_csv", type=str, default="/efs/zixianhuang/VideoREPA/finetune/openvid/openvid_subset_3000.csv")
-    parser.add_argument("--data_root", type=str, default="/efs/zixianhuang/VideoREPA/finetune")
-    parser.add_argument("--output_path", type=str, default="/efs/zixianhuang/VideoREPA/finetune/teacher_pca_matrix.pth")
+    parser.add_argument("--data_csv", type=str, default=repo("finetune", "openvid", "openvid_subset_3000.csv"))
+    parser.add_argument("--data_root", type=str, default=repo("finetune"))
+    parser.add_argument("--output_path", type=str, default=repo("finetune", "teacher_pca_matrix.pth"))
     parser.add_argument("--num_samples", type=int, default=3000)
     parser.add_argument("--layer_indices", type=int, nargs='+', default=[9, 10, 11])
     parser.add_argument("--target_dim", type=int, default=1920)
@@ -121,7 +122,7 @@ def main():
     # Load VideoMAEv2
     print("Loading VideoMAEv2...")
     vision_encoder = vit_base_patch16_224().to(DEVICE)
-    vision_encoder.from_pretrained('/efs/zixianhuang/ckpt/VideoMAEv2/vit_b_k710_dl_from_giant.pth')
+    vision_encoder.from_pretrained(ckpt("VideoMAEv2", "vit_b_k710_dl_from_giant.pth"))
     vision_encoder.eval()
     for param in vision_encoder.parameters():
         param.requires_grad = False

@@ -1,11 +1,14 @@
 #!/usr/bin/env bash
-source /efs/zixianhuang/VideoREPA/videorepa/bin/activate
-export PATH="/efs/zixianhuang/VideoREPA/videorepa/bin:$PATH"
+REPO_ROOT="${REPO_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)}"
+while [ ! -d "${REPO_ROOT}/finetune" ] && [ "${REPO_ROOT}" != "/" ]; do REPO_ROOT="$(dirname "${REPO_ROOT}")"; done
+CKPT_DIR="${CKPT_DIR:-${REPO_ROOT}/checkpoints}"
+source ${REPO_ROOT}/videorepa/bin/activate
+export PATH="${REPO_ROOT}/videorepa/bin:$PATH"
 
-BASE_PATH="/efs/zixianhuang/VideoREPA"
+BASE_PATH="${REPO_ROOT}"
 INFERENCE_DIR="${BASE_PATH}/inference"
 EVAL_V1_DIR="${BASE_PATH}/evaluation/videophy"
-VIDEOPHY_V1_CKPT="/efs/zixianhuang/ckpt/videocon_physics"
+VIDEOPHY_V1_CKPT="${CKPT_DIR}/videocon_physics"
 EXP_NAME="projector_finetune_lr0.1"
 INFER_MODEL_DIR="${BASE_PATH}/infer_model/${EXP_NAME}"
 OUTPUT_VIDEO_DIR="${INFERENCE_DIR}/output_dir/${EXP_NAME}_videophy"

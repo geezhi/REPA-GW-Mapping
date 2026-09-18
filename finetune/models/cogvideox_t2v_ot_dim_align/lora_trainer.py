@@ -40,6 +40,7 @@ from finetune.trainer import Trainer
 from finetune.utils import unwrap_model
 from torchvision.transforms import Normalize
 from timm.data import IMAGENET_DEFAULT_MEAN, IMAGENET_DEFAULT_STD
+from finetune.paths import ckpt
 
 
 # ============================================================================
@@ -226,13 +227,13 @@ class CogVideoXT2VOTDimAlignLoraTrainer(Trainer):
         assert len(self.args.align_models) == 1, 'Currently support one alignment model'
         if self.args.align_models[0] == "VideoMAEv2":
             self.vision_encoder = vit_base_patch16_224().to(self.accelerator.device)
-            self.vision_encoder.from_pretrained('/efs/zixianhuang/ckpt/VideoMAEv2/vit_b_k710_dl_from_giant.pth')
+            self.vision_encoder.from_pretrained(ckpt("VideoMAEv2", "vit_b_k710_dl_from_giant.pth"))
             self.vision_encoder.eval()
             for param in self.vision_encoder.parameters():
                 param.require_grad = False
         elif self.args.align_models[0] == "VideoMAE":
             self.vision_encoder = VideoMAE_vit_base_patch16_224().to(self.accelerator.device)
-            self.vision_encoder.from_pretrained('/efs/zixianhuang/ckpt/VideoMAE/k400_videomae_pretrain_base_patch16_224_frame_16x4_tube_mask_ratio_0_9_e1600.pth')
+            self.vision_encoder.from_pretrained(ckpt("VideoMAE", "k400_videomae_pretrain_base_patch16_224_frame_16x4_tube_mask_ratio_0_9_e1600.pth"))
             self.vision_encoder.eval()
             for param in self.vision_encoder.parameters():
                 param.require_grad = False

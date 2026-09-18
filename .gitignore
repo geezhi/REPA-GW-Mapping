@@ -63,3 +63,6 @@ Thumbs.db
 .idea/
 .vscode/
 *.swp
+
+# Local symlink to the machine checkpoint store (see finetune/paths.py)
+checkpoints

@@ -17,10 +17,10 @@ Workflow:
 
 Usage:
     python pretrain_projector.py \
-        --model_path /efs/zixianhuang/ckpt/cogvideox-2b \
-        --data_csv /efs/zixianhuang/VideoREPA/finetune/openvid/openvid_subset_3000.csv \
-        --data_root /efs/zixianhuang/VideoREPA/finetune \
-        --output_path /efs/zixianhuang/VideoREPA/finetune/pretrained_projector.pth \
+        --model_path <CKPT>/cogvideox-2b \
+        --data_csv <REPO>/finetune/openvid/openvid_subset_3000.csv \
+        --data_root <REPO>/finetune \
+        --output_path <REPO>/finetune/pretrained_projector.pth \
         --align_layer 18 \
         --align_dims 768 \
         --projector_dim 2048 \
@@ -57,6 +57,7 @@ from finetune.models.cogvideox_t2v_align.models.cogvideox_align import (
     build_mlp,
 )
 from finetune.models.cogvideox_t2v_align.models.ssl.VideoMAEv2 import vit_base_patch16_224
+from finetune.paths import ckpt, repo
 
 
 class ProjectorPretrainDataset(Dataset):
@@ -272,7 +273,7 @@ class ProjectorPretrainer:
 
         # VideoMAEv2
         self.vision_encoder = vit_base_patch16_224().to(self.device)
-        self.vision_encoder.from_pretrained('/efs/zixianhuang/ckpt/VideoMAEv2/vit_b_k710_dl_from_giant.pth')
+        self.vision_encoder.from_pretrained(ckpt("VideoMAEv2", "vit_b_k710_dl_from_giant.pth"))
         self.vision_encoder.eval()
 
         # Freeze all
@@ -560,10 +561,10 @@ class ProjectorPretrainer:
 
 def main():
     parser = argparse.ArgumentParser(description="Pretrain projector for VideoREPA")
-    parser.add_argument("--model_path", type=str, default="/efs/zixianhuang/ckpt/cogvideox-2b")
-    parser.add_argument("--data_csv", type=str, default="/efs/zixianhuang/VideoREPA/finetune/openvid/openvid_1w6.csv")
-    parser.add_argument("--data_root", type=str, default="/efs/zixianhuang/VideoREPA/finetune")
-    parser.add_argument("--output_path", type=str, default="/efs/zixianhuang/VideoREPA/finetune/pretrained_projector.pth")
+    parser.add_argument("--model_path", type=str, default=ckpt("cogvideox-2b"))
+    parser.add_argument("--data_csv", type=str, default=repo("finetune", "openvid", "openvid_1w6.csv"))
+    parser.add_argument("--data_root", type=str, default=repo("finetune"))
+    parser.add_argument("--output_path", type=str, default=repo("finetune", "pretrained_projector.pth"))
     parser.add_argument("--align_layer", type=int, default=18)
     parser.add_argument("--align_dims", type=int, nargs='+', default=[768])
     parser.add_argument("--projector_dim", type=int, default=2048)

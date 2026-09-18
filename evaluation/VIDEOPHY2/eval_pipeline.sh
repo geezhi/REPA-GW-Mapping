@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+REPO_ROOT="${REPO_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)}"
+while [ ! -d "${REPO_ROOT}/finetune" ] && [ "${REPO_ROOT}" != "/" ]; do REPO_ROOT="$(dirname "${REPO_ROOT}")"; done
+CKPT_DIR="${CKPT_DIR:-${REPO_ROOT}/checkpoints}"
 # VideoPhy2 评测 pipeline
 # 使用方法:
 #   1. 修改 INPUT_CSV 为你的实验名称对应的 csv
@@ -6,7 +9,7 @@
 set -e
 
 INPUT_CSV='VideoREPA_2B.csv'
-CHECKPOINT="/efs/zixianhuang/ckpt/videophy2"
+CHECKPOINT="${CKPT_DIR}/videophy2"
 
 OUTPUT_FOLDER="./output_dir/${INPUT_CSV%.csv}"
 

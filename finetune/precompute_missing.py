@@ -12,9 +12,10 @@ from safetensors.torch import save_file, load_file
 from diffusers import AutoencoderKLCogVideoX
 from transformers import AutoTokenizer, T5EncoderModel
 from torchvision.transforms import Compose, Lambda, Resize, CenterCrop
+from finetune.paths import ckpt, repo
 
-MODEL_PATH = "/efs/zixianhuang/ckpt/cogvideox-2b"
-DATA_ROOT = Path("/efs/zixianhuang/VideoREPA/finetune")
+MODEL_PATH = ckpt("cogvideox-2b")
+DATA_ROOT = Path(repo("finetune"))
 CACHE_DIR = DATA_ROOT / "cache" / "openvid"
 VIDEO_DIR = DATA_ROOT / "openvid" / "videos"
 RESOLUTION = (480, 720)  # H, W

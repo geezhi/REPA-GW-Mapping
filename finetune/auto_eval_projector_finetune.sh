@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
+REPO_ROOT="${REPO_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)}"
+while [ ! -d "${REPO_ROOT}/finetune" ] && [ "${REPO_ROOT}" != "/" ]; do REPO_ROOT="$(dirname "${REPO_ROOT}")"; done
+CKPT_DIR="${CKPT_DIR:-${REPO_ROOT}/checkpoints}"
 # Auto-evaluate projector finetune experiment after training finishes.
 # Usage: nohup bash auto_eval_projector_finetune.sh > auto_eval_projector_finetune.log 2>&1 &
 
-TRAIN_LOG="/efs/zixianhuang/VideoREPA/finetune/train_projector_finetune.log"
+TRAIN_LOG="${REPO_ROOT}/finetune/train_projector_finetune.log"
 TRAIN_PID=2408933
 
 echo "[$(date)] Monitoring projector finetune training (PID ${TRAIN_PID}) for completion..."
@@ -22,14 +25,14 @@ done
 echo "[$(date)] Waiting 30s for GPU release..."
 sleep 30
 
-source /efs/zixianhuang/VideoREPA/videorepa/bin/activate
-export PATH="/efs/zixianhuang/VideoREPA/videorepa/bin:$PATH"
+source ${REPO_ROOT}/videorepa/bin/activate
+export PATH="${REPO_ROOT}/videorepa/bin:$PATH"
 
-BASE_PATH="/efs/zixianhuang/VideoREPA"
-ORIG_MODEL="/efs/zixianhuang/ckpt/cogvideox-2b"
+BASE_PATH="${REPO_ROOT}"
+ORIG_MODEL="${CKPT_DIR}/cogvideox-2b"
 INFERENCE_DIR="${BASE_PATH}/inference"
 EVAL_V1_DIR="${BASE_PATH}/evaluation/videophy"
-VIDEOPHY_V1_CKPT="/efs/zixianhuang/ckpt/videocon_physics"
+VIDEOPHY_V1_CKPT="${CKPT_DIR}/videocon_physics"
 EXP_NAME="projector_finetune_lr0.1"
 EXP_DIR="${BASE_PATH}/finetune/output_dir_cogvideox-t2v-align_cosine_similarity_exp_projector_finetune_lr0.1_3w2_4ep"
 CHECKPOINT_STEP="checkpoint-4000"

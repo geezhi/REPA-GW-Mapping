@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
+REPO_ROOT="${REPO_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)}"
+while [ ! -d "${REPO_ROOT}/finetune" ] && [ "${REPO_ROOT}" != "/" ]; do REPO_ROOT="$(dirname "${REPO_ROOT}")"; done
+CKPT_DIR="${CKPT_DIR:-${REPO_ROOT}/checkpoints}"
 # Auto-evaluate teacher PCA experiment after training finishes.
 # Usage: nohup bash auto_eval_teacher_pca.sh > auto_eval_teacher_pca.log 2>&1 &
 
-TRAIN_LOG="/efs/zixianhuang/VideoREPA/finetune/train_teacher_pca.log"
+TRAIN_LOG="${REPO_ROOT}/finetune/train_teacher_pca.log"
 TRAIN_PID=1223480
 
 echo "[$(date)] Monitoring teacher PCA training (PID ${TRAIN_PID}) for completion..."
@@ -23,7 +26,7 @@ echo "[$(date)] Waiting 30s for GPU release..."
 sleep 30
 
 # Check that checkpoint exists
-EXP_DIR="/efs/zixianhuang/VideoREPA/finetune/output_dir_cogvideox-t2v-align_cosine_similarity_exp_teacher_pca_multilayer_3w2_4ep"
+EXP_DIR="${REPO_ROOT}/finetune/output_dir_cogvideox-t2v-align_cosine_similarity_exp_teacher_pca_multilayer_3w2_4ep"
 if [ ! -d "${EXP_DIR}/checkpoint-4000" ]; then
     echo "[$(date)] WARNING: checkpoint-4000 not found. Looking for latest checkpoint..."
     LATEST_CKPT=$(ls -d ${EXP_DIR}/checkpoint-* 2>/dev/null | sort -t- -k2 -n | tail -1)
@@ -39,17 +42,17 @@ fi
 
 echo "[$(date)] Starting evaluation pipeline..."
 
-BASE_PATH="/efs/zixianhuang/VideoREPA"
-ORIG_MODEL="/efs/zixianhuang/ckpt/cogvideox-2b"
+BASE_PATH="${REPO_ROOT}"
+ORIG_MODEL="${CKPT_DIR}/cogvideox-2b"
 INFERENCE_DIR="${BASE_PATH}/inference"
 EVAL_V1_DIR="${BASE_PATH}/evaluation/videophy"
-VIDEOPHY_V1_CKPT="/efs/zixianhuang/ckpt/videocon_physics"
+VIDEOPHY_V1_CKPT="${CKPT_DIR}/videocon_physics"
 EXP_NAME="teacher_pca_multilayer"
 INFER_MODEL_DIR="${BASE_PATH}/infer_model/${EXP_NAME}"
 OUTPUT_VIDEO_DIR="${INFERENCE_DIR}/output_dir/${EXP_NAME}_videophy"
 
-source /efs/zixianhuang/VideoREPA/videorepa/bin/activate
-export PATH="/efs/zixianhuang/VideoREPA/videorepa/bin:$PATH"
+source ${REPO_ROOT}/videorepa/bin/activate
+export PATH="${REPO_ROOT}/videorepa/bin:$PATH"
 
 # ============ Stage 1: Merge Checkpoint ============
 echo "[$(date)] Stage 1: Merging checkpoint..."

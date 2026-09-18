@@ -24,6 +24,7 @@ import torch.nn as nn
 from ..utils import register
 from torchvision.transforms import Normalize
 from timm.data import IMAGENET_DEFAULT_MEAN, IMAGENET_DEFAULT_STD
+from finetune.paths import ckpt
 
 class CogVideoXT2VAlignLoraTrainer(Trainer):
     UNLOAD_LIST = ["vae"]  # Keep text_encoder on GPU for uncached samples
@@ -32,7 +33,7 @@ class CogVideoXT2VAlignLoraTrainer(Trainer):
         assert len(self.args.align_models) == 1, 'Currently support one alignment model'
         if self.args.align_models[0] == "VideoMAEv2":
             self.vision_encoder = vit_base_patch16_224().to(self.accelerator.device)
-            self.vision_encoder.from_pretrained('/efs/zixianhuang/ckpt/VideoMAEv2/vit_b_k710_dl_from_giant.pth')  # The from pretrained return None
+            self.vision_encoder.from_pretrained(ckpt("VideoMAEv2", "vit_b_k710_dl_from_giant.pth"))  # The from pretrained return None
             # freeze the parameter
             self.vision_encoder.eval()
             # Actually no need to set False because it is not going through the optimizer
@@ -47,7 +48,7 @@ class CogVideoXT2VAlignLoraTrainer(Trainer):
                 print(f"Loaded teacher PCA matrix: {self.teacher_pca_W.shape}, layers={self.teacher_pca_layer_indices}")
         elif self.args.align_models[0] == "VideoMAE":
             self.vision_encoder = VideoMAE_vit_base_patch16_224().to(self.accelerator.device)
-            self.vision_encoder.from_pretrained('/efs/zixianhuang/ckpt/VideoMAE/k400_videomae_pretrain_base_patch16_224_frame_16x4_tube_mask_ratio_0_9_e1600.pth')
+            self.vision_encoder.from_pretrained(ckpt("VideoMAE", "k400_videomae_pretrain_base_patch16_224_frame_16x4_tube_mask_ratio_0_9_e1600.pth"))
             self.vision_encoder.eval()
             for param in self.vision_encoder.parameters():
                 param.require_grad = False
@@ -69,7 +70,7 @@ class CogVideoXT2VAlignLoraTrainer(Trainer):
                 param.require_grad = False 
         elif self.args.align_models[0] == 'VJEPA':
             from finetune.models.cogvideox_t2v_align.models.ssl.JEPA import load_VJEPA
-            self.vision_encoder = load_VJEPA(device=self.accelerator.device, pretrained_path='/efs/zixianhuang/ckpt/vjepa_l/vitl16.pth.tar')
+            self.vision_encoder = load_VJEPA(device=self.accelerator.device, pretrained_path=ckpt("vjepa_l", "vitl16.pth.tar"))
             self.vision_encoder.eval()
             for param in self.vision_encoder.parameters():
                 param.require_grad = False 

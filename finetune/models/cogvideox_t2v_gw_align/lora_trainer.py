@@ -44,6 +44,7 @@ from finetune.trainer import Trainer
 from finetune.utils import unwrap_model
 
 from ..utils import register
+from finetune.paths import ckpt
 
 # Encoders whose pre-processing is ImageNet normalisation on ``[0, 1]`` pixels.
 IMAGENET_NORMALIZED_ENCODERS = ("VideoMAEv2", "VideoMAE", "OminiMAE", "VJEPA", "VJEPA2")
@@ -65,7 +66,7 @@ class CogVideoXT2VGWAlignLoraTrainer(Trainer):
     UNLOAD_LIST = ["text_encoder", "vae"]
 
     #: Root that holds the frozen video-encoder weights. Override with ``VFM_CKPT_DIR``.
-    VFM_CKPT_DIR = os.environ.get("VFM_CKPT_DIR", "/efs/zixianhuang/ckpt")
+    VFM_CKPT_DIR = ckpt()
 
     def __init__(self, args: Any) -> None:
         super().__init__(args)

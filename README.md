@@ -1,13 +1,13 @@
-# REPA w/ GW Mapping
+# VideoREPA
 
-**Representation Alignment with Gromov-Wasserstein Mapping** — aligning the internal
-features of a CogVideoX denoiser to a frozen video foundation model so that generated
-videos are physically plausible.
+Representation alignment for video diffusion transformers — aligning the internal features
+of a CogVideoX denoiser to a frozen video foundation model so that generated videos are
+physically plausible.
 
 Standard REPA bridges the student / teacher feature gap with a *learnable* MLP projector.
-We show that the projector is the weak link: it adds parameters and, worse, **absorbs the
+We argue that the projector is the weak link: it adds parameters and, worse, **absorbs the
 alignment gradient**, leaving the denoiser backbone with a diluted training signal.
-**REPA w/ GW Mapping** removes it entirely. Instead of learning a mapping
+Our method, **REPA w/ GW Mapping**, removes it entirely. Instead of *learning* a mapping
 $\mathbb{R}^{D_1} \to \mathbb{R}^{D_2}$, we *solve* for one: an entropic
 **Gromov-Wasserstein** transport plan $T \in \mathbb{R}^{D_1 \times D_2}$ between feature
 **dimensions**, computed per sample with no gradients and no parameters. Row-normalizing
@@ -17,8 +17,6 @@ backbone**.
 
 This repository also ships the baselines and the projector-free alternatives we compared
 against (REPA, TRD, Sinkhorn-OT dimension alignment, local Gram flow, ...).
-
-> Built on top of **VideoREPA**; see [Acknowledgements](#acknowledgements).
 
 ---
 
@@ -30,7 +28,7 @@ against (REPA, TRD, Sinkhorn-OT dimension alignment, local Gram flow, ...).
 * [Quickstart](#quickstart)
 * [GW Mapping](#gw-mapping)
 * [Results](#results)
-* [Citation](#citation)
+* [Acknowledgements](#acknowledgements)
 
 ---
 
@@ -178,23 +176,9 @@ by git.
 
 ---
 
-## Citation
-
-```bibtex
-@article{repa_gw_mapping,
-  title   = {REPA w/ GW Mapping: Projector-Free Representation Alignment
-             via Gromov-Wasserstein Dimension Mapping},
-  author  = {<authors>},
-  journal = {<venue>},
-  year    = {2026}
-}
-```
-
----
-
 ## Acknowledgements
 
-This work builds on **VideoREPA**, and the training framework is derived from
+The training framework is derived from
 [CogVideoX-Factory](https://github.com/a-r-r-o-w/cogvideox-factory) and
 [diffusers](https://github.com/huggingface/diffusers). We thank the authors of
 REPA, VideoMAEv2, VJEPA and VideoPhy. See `LICENSE`.

@@ -1,0 +1,65 @@
+# =============================================================================
+# VideoREPA
+#
+# The workspace is ~1.2 TB: it carries a conda env, a venv, the OpenVid dataset,
+# a precomputed teacher-feature cache, vendored third-party sources and every
+# experiment's checkpoints / sample videos. None of that belongs in git.
+# Model checkpoints are distributed separately (see README).
+# =============================================================================
+
+# ---- Python environments ----------------------------------------------------
+videorepa/
+.venv/
+venv/
+env/
+*.egg-info/
+
+# ---- Python bytecode --------------------------------------------------------
+__pycache__/
+*.py[cod]
+*.pyo
+.ipynb_checkpoints/
+
+# ---- Datasets and precomputed features --------------------------------------
+finetune/openvid/
+finetune/cache/
+*.mp4
+*.avi
+*.webm
+*.zip
+*.tar
+*.tar.gz
+
+# ---- Checkpoints and experiment outputs -------------------------------------
+finetune/output_dir*/
+inference/output_dir/
+infer_model/
+*.safetensors
+*.ckpt
+*.bin
+*.pth
+*.pt
+*.pkl
+*.npz
+# NOTE: finetune/pretrained_projector.pth (58 MB) and finetune/teacher_pca_matrix.pth
+# (21 MB) are intentionally excluded -- ship them as release assets, not in git.
+
+# ---- Logs and run artifacts -------------------------------------------------
+*.log
+*.out
+wandb/
+runs/
+outputs/
+evaluation/**/output_dir*/
+evaluation/**/csv_file/
+tensorboard/
+
+# ---- Vendored third-party sources -------------------------------------------
+finetune/diffusers/
+
+# ---- OS / editor ------------------------------------------------------------
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp

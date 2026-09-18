@@ -1,11 +1,11 @@
-"""Filesystem roots used across VideoREPA.
+"""Filesystem roots used across this repository.
 
 Everything that used to be hard-coded as ``/efs/...`` now goes through this module so
 the repository is portable and its releases do not leak machine-specific paths.
 
 Environment overrides
 ---------------------
-``VIDEOREPA_ROOT``  repository root      (default: the parent of ``finetune/``)
+``REPA_GW_ROOT``    repository root      (default: the parent of ``finetune/``)
 ``VFM_CKPT_DIR``    pretrained weights   (default: ``<repo root>/checkpoints``)
 
 Typical layout under ``VFM_CKPT_DIR``::
@@ -27,7 +27,7 @@ __all__ = ["REPO_ROOT", "CKPT_DIR", "repo", "ckpt"]
 
 #: Absolute path of the repository root (the directory that contains ``finetune/``).
 REPO_ROOT: str = os.environ.get(
-    "VIDEOREPA_ROOT", os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    "REPA_GW_ROOT", os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 )
 
 #: Absolute path of the directory holding pretrained weights.

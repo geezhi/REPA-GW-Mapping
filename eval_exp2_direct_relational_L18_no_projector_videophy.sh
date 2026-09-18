@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+REPO_ROOT="${REPO_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)}"
+while [ ! -d "${REPO_ROOT}/finetune" ] && [ "${REPO_ROOT}" != "/" ]; do REPO_ROOT="$(dirname "${REPO_ROOT}")"; done
+CKPT_DIR="${CKPT_DIR:-${REPO_ROOT}/checkpoints}"
 set -e
 
 # Ensure conda environment is activated
@@ -28,16 +31,16 @@ fi
 ###############################################################################
 
 # ======================== Configuration ========================
-BASE_PATH="/group/40059/zixianhuang/VideoREPA_exp2"
+BASE_PATH="${REPO_ROOT}"
 FINETUNE_DIR="${BASE_PATH}/finetune"
 INFERENCE_DIR="${BASE_PATH}/inference"
 EVAL_V1_DIR="${BASE_PATH}/evaluation/videophy"
 
 # Original CogVideoX-2B model path (reuse from existing ckpt)
-ORIG_MODEL="/group/40059/zixianhuang/VideoREPA/ckpt/cogvideox-2b-cosine-sim"
+ORIG_MODEL="${CKPT_DIR}/cogvideox-2b-cosine-sim"
 
 # VideoPhy v1 AutoEval checkpoint path
-VIDEOPHY_V1_CKPT="/group/40059/zixianhuang/VideoREPA/ckpt/videocon_physics"
+VIDEOPHY_V1_CKPT="${CKPT_DIR}/videocon_physics"
 
 # Experiment directory (exp2: Direct relational L18 no projector, checkpoint-4000)
 EXP_DIR="${BASE_PATH}/finetune/output_dir_cogvideox-t2v-direct-align_gw_relational_exp2_direct_relational_L18_no_projector"

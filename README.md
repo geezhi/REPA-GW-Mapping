@@ -1,13 +1,24 @@
-# VideoREPA
+# REPA w/ GW Mapping
 
-Representation alignment for video diffusion transformers — aligning the internal features
-of a CogVideoX denoiser to a frozen video foundation model in order to make video
-generation physically plausible.
+**Representation Alignment with Gromov-Wasserstein Mapping** — aligning the internal
+features of a CogVideoX denoiser to a frozen video foundation model so that generated
+videos are physically plausible.
 
-This repository studies **how** to bridge the student / teacher feature gap. It contains one
-baseline (REPA-style learned projector) and a family of projector-free alignment objectives.
-The flagship method is **GW-Relational**, which replaces the projector with a
-Gromov-Wasserstein transport plan.
+Standard REPA bridges the student / teacher feature gap with a *learnable* MLP projector.
+We show that the projector is the weak link: it adds parameters and, worse, **absorbs the
+alignment gradient**, leaving the denoiser backbone with a diluted training signal.
+**REPA w/ GW Mapping** removes it entirely. Instead of learning a mapping
+$\mathbb{R}^{D_1} \to \mathbb{R}^{D_2}$, we *solve* for one: an entropic
+**Gromov-Wasserstein** transport plan $T \in \mathbb{R}^{D_1 \times D_2}$ between feature
+**dimensions**, computed per sample with no gradients and no parameters. Row-normalizing
+$T$ yields a soft projection that brings the teacher into the student's space, where an
+ordinary cosine (or Gram) loss applies — so **100% of the alignment gradient reaches the
+backbone**.
+
+This repository also ships the baselines and the projector-free alternatives we compared
+against (REPA, TRD, Sinkhorn-OT dimension alignment, local Gram flow, ...).
+
+> Built on top of **VideoREPA**; see [Acknowledgements](#acknowledgements).
 
 ---
 
@@ -17,7 +28,7 @@ Gromov-Wasserstein transport plan.
 * [Repository layout](#repository-layout)
 * [Installation](#installation)
 * [Quickstart](#quickstart)
-* [GW-Relational](#gw-relational)
+* [GW Mapping](#gw-mapping)
 * [Results](#results)
 * [Citation](#citation)
 
@@ -26,7 +37,8 @@ Gromov-Wasserstein transport plan.
 ## Alignment objectives
 
 All objectives tap the CogVideoX transformer at layer $l$ (default 18) and align the
-resulting tokens to a frozen encoder (default VideoMAEv2, $D_2 = 768$).
+resulting tokens to a frozen encoder (default VideoMAEv2, $D_2 = 768$). The last two rows
+are **REPA w/ GW Mapping**.
 
 | `--loss` | Projector | How dimensions are matched | Extra params |
 |---|---|---|---|
@@ -129,7 +141,7 @@ python calculate_mean.py
 
 ---
 
-## GW-Relational
+## GW Mapping
 
 Given student features $X \in \mathbb{R}^{N \times D_1}$ and teacher features
 $Y \in \mathbb{R}^{N \times D_2}$ with $D_1 \ne D_2$, we solve
@@ -152,27 +164,29 @@ python finetune/gw_relational/example.py    # recovers a hidden dimension permut
 
 <!-- TODO: fill in from evaluation/. Numbers below are placeholders. -->
 
-| Method | Projector | VideoPhy SA $\uparrow$ | VideoPhy PC $\uparrow$ |
-|---|---|---|---|
-| CogVideoX-5B (baseline) | — | — | — |
-| + REPA (`cosine_similarity`) | MLP | — | — |
-| + OT dim align | None | — | — |
-| **+ GW-Relational (ours)** | **None** | — | — |
+| Method | Projector | Extra params | VideoPhy SA $\uparrow$ | VideoPhy PC $\uparrow$ |
+|---|---|---|---|---|
+| CogVideoX-5B (baseline) | — | — | — | — |
+| + REPA (`cosine_similarity`) | MLP | ~1.5M | — | — |
+| + OT dim align | None | 0 | — | — |
+| **+ REPA w/ GW Mapping (ours)** | **None** | **0** | — | — |
 
-Training logs for the released runs are kept at the workspace root
-(`5b_lora_gw_align_full.log`, `2b_gw_dim_align_videophy2_eval.log`, ...).
+<!-- TODO: fill in from evaluation/. Numbers above are placeholders. -->
+
+Training logs for the released runs live under `finetune/output_dir*/` and are not tracked
+by git.
 
 ---
 
 ## Citation
 
 ```bibtex
-@article{videorepa2025,
-  title   = {VideoREPA: Learning Physical Plausibility in Video Generation
-             via Relational Alignment with Foundation Models},
+@article{repa_gw_mapping,
+  title   = {REPA w/ GW Mapping: Projector-Free Representation Alignment
+             via Gromov-Wasserstein Dimension Mapping},
   author  = {<authors>},
   journal = {<venue>},
-  year    = {2025}
+  year    = {2026}
 }
 ```
 
@@ -180,7 +194,7 @@ Training logs for the released runs are kept at the workspace root
 
 ## Acknowledgements
 
-The training framework is built on
+This work builds on **VideoREPA**, and the training framework is derived from
 [CogVideoX-Factory](https://github.com/a-r-r-o-w/cogvideox-factory) and
 [diffusers](https://github.com/huggingface/diffusers). We thank the authors of
 REPA, VideoMAEv2, VJEPA and VideoPhy. See `LICENSE`.

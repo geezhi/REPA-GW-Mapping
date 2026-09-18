@@ -1,6 +1,7 @@
-# GW-Relational: Projector-Free Representation Alignment via Gromov-Wasserstein
+# GW Mapping: Projector-Free Representation Alignment via Gromov-Wasserstein
 
-Canonical, dependency-light implementation of the **GW alignment** used in VideoREPA.
+Canonical, dependency-light implementation of the **GW mapping** behind
+**REPA w/ GW Mapping**.
 
 > Align a diffusion transformer's internal features to a frozen video encoder
 > **without any learnable projector** — the dimension mismatch is bridged by an

@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+REPO_ROOT="${REPO_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)}"
+while [ ! -d "${REPO_ROOT}/finetune" ] && [ "${REPO_ROOT}" != "/" ]; do REPO_ROOT="$(dirname "${REPO_ROOT}")"; done
+CKPT_DIR="${CKPT_DIR:-${REPO_ROOT}/checkpoints}"
 set -e
 
 ###############################################################################
@@ -22,19 +25,19 @@ set -e
 ###############################################################################
 
 # ======================== Configuration ========================
-BASE_PATH="/group/40059/zixianhuang/VideoREPA_exp2"
+BASE_PATH="${REPO_ROOT}"
 FINETUNE_DIR="${BASE_PATH}/finetune"
 INFERENCE_DIR="${BASE_PATH}/inference"
 EVAL_V1_DIR="${BASE_PATH}/evaluation/videophy"
 
 # Original CogVideoX-2B model path (reuse from existing ckpt)
-ORIG_MODEL="/group/40059/zixianhuang/VideoREPA/ckpt/cogvideox-2b-cosine-sim"
+ORIG_MODEL="${CKPT_DIR}/cogvideox-2b-cosine-sim"
 
 # VideoPhy v1 AutoEval checkpoint path
-VIDEOPHY_V1_CKPT="/group/40059/zixianhuang/VideoREPA/ckpt/videocon_physics"
+VIDEOPHY_V1_CKPT="${CKPT_DIR}/videocon_physics"
 
 # Experiment directory (high noise align: full data, 4 epochs, checkpoint-4000)
-EXP_DIR="/group/40059/zixianhuang/VideoREPA_exp2/finetune/output_dir_cogvideox-t2v-align_cosine_similarity_exp2_full_data_4ep_REPA_high_noise_align"
+EXP_DIR="${REPO_ROOT}/finetune/output_dir_cogvideox-t2v-align_cosine_similarity_exp2_full_data_4ep_REPA_high_noise_align"
 CHECKPOINT_STEP="checkpoint-4000"
 
 # Inference model directory (will be created)

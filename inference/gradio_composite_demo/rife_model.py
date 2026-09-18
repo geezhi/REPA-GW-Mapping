@@ -180,5 +180,5 @@ def rife_inference_with_latents(model, latents):
 #     snapshot_download(repo_id="AlexWortega/RIFE", local_dir="model_rife")
 #     model = load_rife_model("model_rife")
  
-#     video_path = rife_inference_with_path(model, "/mnt/ceph/develop/jiawei/CogVideo/output/20241003_130720.mp4")
+#     video_path = rife_inference_with_path(model, "/path/to/input.mp4")
 #     print(video_path)

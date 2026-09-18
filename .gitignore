@@ -1,5 +1,5 @@
 # =============================================================================
-# VideoREPA
+# REPA w/ GW Mapping
 #
 # The workspace is ~1.2 TB: it carries a conda env, a venv, the OpenVid dataset,
 # a precomputed teacher-feature cache, vendored third-party sources and every

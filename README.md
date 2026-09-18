@@ -1,8 +1,8 @@
-# VideoREPA
+# REPA w/ GW Mapping
 
-Representation alignment for video diffusion transformers — aligning the internal features
-of a CogVideoX denoiser to a frozen video foundation model so that generated videos are
-physically plausible.
+**Representation Alignment with Gromov-Wasserstein Mapping** — aligning the internal
+features of a CogVideoX denoiser to a frozen video foundation model so that generated
+videos are physically plausible.
 
 Standard REPA bridges the student / teacher feature gap with a *learnable* MLP projector.
 We argue that the projector is the weak link: it adds parameters and, worse, **absorbs the
@@ -15,8 +15,9 @@ $T$ yields a soft projection that brings the teacher into the student's space, w
 ordinary cosine (or Gram) loss applies — so **100% of the alignment gradient reaches the
 backbone**.
 
-This repository also ships the baselines and the projector-free alternatives we compared
-against (REPA, TRD, Sinkhorn-OT dimension alignment, local Gram flow, ...).
+This repository is built on top of **VideoREPA** and also ships the baselines and the
+projector-free alternatives we compared against (REPA, TRD, Sinkhorn-OT dimension
+alignment, local Gram flow, ...).
 
 ---
 
